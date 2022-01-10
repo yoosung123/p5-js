@@ -1,0 +1,1161 @@
+function c123() {
+  ellipse(100, 100, 100, 100)
+}
+
+
+var keys = [];
+keys[-1] = false;
+keys[-1] = false;
+function keyPressed() {
+  keys[keyCode] = true;
+  keys[-1] = true;
+}
+function keyReleased() {
+  keys[keyCode] = !true;
+  keys[-2] = true;
+}
+
+
+var buggers = [];
+var ships = [];
+var players = [];
+var rogues = [];
+var bullets = [];
+var explods = [];
+
+
+
+
+class Effect {
+  constructor() {
+    
+  }
+}
+class Explosion extends Effect {
+  constructor(t) {
+    super()
+    this.x = t.x;
+    this.y = t.y;
+    this.size = t.size;
+    this.toSize = t.toSize;
+    this.grow = t.grow;
+    this.n = t.n;
+  }
+  display() {
+    fill(255, random(255), 0)
+    noStroke();
+    ellipse(this.x, this.y, this.size, this.size)
+  }
+  expand() {
+    this.size += this.grow;
+    this.size = constrain(this.size, 0, this.toSize)
+    if (this.size >= this.toSize) {
+      explods.splice(this.n, 1)
+    }
+  }
+  update() {
+    this.expand();
+    this.display();
+  }
+  
+}
+class DamageScreen extends Effect {
+  constructor() {
+    super()
+  }
+}
+
+
+
+
+class Projectile {
+  constructor() {
+    
+  }
+}
+class Bullet extends Projectile {
+  constructor(t) {
+    super()
+    this.x = t.x;
+    this.y = t.y;
+    this.clr = t.clr;
+    this.size = t.size;
+    this.damage = t.damage;
+    this.team = t.team;
+    this.pierce = t.pierce;
+    this.speed = t.speed;
+    this.angle = t.angle;
+    this.xv = cos(this.angle)*this.speed;
+    this.yv = sin(this.angle)*this.speed;
+  }
+  
+  
+  display() {
+    let t = this;
+    
+    noFill();
+    stroke(t.clr)
+    strokeWeight(2)
+    ellipse(t.x, t.y, t.size, t.size)
+  }
+  
+  
+  
+  move() {
+    let t = this;
+    
+    this.xv = cos(-this.angle)*t.speed;
+    this.yv = sin(-this.angle)*t.speed;
+    
+    this.x += t.xv;
+    this.y += t.yv;
+  }
+  
+  
+  collide() {
+    let t = this;
+    
+    if (t.team === "bugger" || t.team === "buggers") {
+      for (let shp = ships.length-1; shp >= 0; shp--) {
+        let s = ships[shp]
+
+        let ts = t.size / 2
+        let ss = s.w / 2
+        if (t.x + ts > s.x - ss || t.x - ts < s.x + ss || t.y + ts > s.y - ss || t.y - ts < s.y + ss) {
+          if (dist(t.x, t.y, s.x, s.y) < t.size / 2 + s.w / 2) {
+            explods.push(new Explosion({
+              x: t.x,
+              y: t.y,
+              size: 0,
+              toSize: 10,
+              grow: 1,
+              n: explods.length,
+            }))
+            this.pierce -= 1;
+            ships[shp].lives -= t.damage;
+          }
+        }
+      }
+    } else if (t.team === "ship" || t.team === "ships") {
+      for (let bgs in buggers) {
+        let b = buggers[bgs]
+
+        let ts = t.size / 2;
+        let bs = b.w / 2;
+
+        if (t.x + ts > b.x - bs || t.x - ts < b.x + bs || t.y + ts > b.y - bs || t.y - ts < b.y + bs) {
+          if (dist(t.x, t.y, b.x, b.y) < t.size / 2 + b.w / 2) {
+            explods.push(new Explosion({
+              x: t.x,
+              y: t.y,
+              size: 0,
+              toSize: 10,
+              grow: 1,
+              n: explods.length,
+            }))
+            this.pierce -= 1;
+            buggers[bgs].lives -= t.damage;
+          }
+        }
+      }
+    } else if (t.team === undefined) {
+      for (let shp = ships.length-1; shp >= 0; shp--) {
+        let s = ships[shp]
+
+        let ts = t.size / 2
+        let ss = s.w / 2
+        if (t.x + ts > s.x - ss || t.x - ts < s.x + ss || t.y + ts > s.y - ss || t.y - ts < s.y + ss) {
+          if (dist(t.x, t.y, s.x, s.y) < t.size / 2 + s.w / 2) {
+            explods.push(new Explosion({
+              x: t.x,
+              y: t.y,
+              size: 0,
+              toSize: 10,
+              grow: 1,
+              n: explods.length,
+            }))
+            this.pierce -= 1;
+            ships[shp].lives -= t.damage;
+          }
+        }
+      }
+      for (let bgs in buggers) {
+        let b = buggers[bgs]
+
+        let ts = t.size / 2;
+        let bs = b.w / 2;
+
+        if (t.x + ts > b.x - bs || t.x - ts < b.x + bs || t.y + ts > b.y - bs || t.y - ts < b.y + bs) {
+          if (dist(t.x, t.y, b.x, b.y) < t.size / 2 + b.w / 2) {
+            explods.push(new Explosion({
+              x: t.x,
+              y: t.y,
+              size: 0,
+              toSize: 10,
+              grow: 1,
+              n: explods.length,
+            }))
+            this.pierce -= 1;
+            buggers[bgs].lives -= t.damage;
+          }
+        }
+      }
+    }
+    
+  }
+  
+  update() {
+    this.move();
+    this.collide();
+    this.display();
+  }
+}
+
+
+class Unit {
+  constructor() {
+    
+  }
+  restrain() {
+    if (!this.player) {
+      let sub = 100;
+      if (this.x < sub && this.otherAng > PI/3 && this.otherAng < TAU - PI/3) {
+        if (this.otherAng > PI) this.otherAng += PI/10
+        else if (this.otherAng < PI) this.otherAng -= PI/10
+      }
+      if (this.x > width-sub && this.otherAng < PI-(PI/3) && this.otherAng > PI + PI/3) {
+        if (this.otherAng < TAU) this.otherAng += PI/10
+        else if (this.otherAng > 0) this.otherAng -= PI/10
+      }
+
+      if (this.y > sub && this.otherAng < PI-(PI/3) && this.otherAng > PI/3) {
+        if (this.otherAng > HALF_PI) this.otherAng += PI/10
+        else if (this.otherAng <= HALF_PI) this.otherAng -= PI/10
+      }
+      if (this.y < height-sub && this.otherAng > PI+PI/3 && this.otherAng < TAU - PI/3) {
+        if (this.otherAng > PI*1.5) this.otherAng += PI/10
+        else if (this.otherAng <= PI*1.5) this.otherAng -= PI/10
+      }
+    }
+    
+    if (this.x < 0) {
+      this.x = width-0
+    }
+    if (this.x > width-0) {
+      this.x = 0
+    }
+    if (this.y < 0) {
+      this.y = height-0
+    }
+    if (this.y > height-0) {
+      this.y = 0
+    }
+  }
+}
+
+class Bug extends Unit {
+  constructor(t) {
+    super()
+    this.x = t.x;
+    this.y = t.y;
+    this.w = t.w;
+    this.h = t.h;
+    this.reload = t.reload;
+    this.maxR = t.maxR;
+    this.speed = t.speed;
+    this.angle = t.angle;
+    this.otherAng = this.angle;
+    this.reAng = this.angle;
+    this.lives = t.lives;
+    this.xv = cos(this.angle)*t.speed;
+    this.yv = sin(this.angle)*t.speed;
+    this.baseDir = t.baseDir;
+    this.dir = t.dir;
+    this.dirUpdate = t.dirUpdate;
+    this.n = t.n;
+    this.target = t.target;
+    //this.target = 1
+    
+    
+    
+  }
+  display() {
+    let t = this
+    let tw = t.w/2
+    let th = t.h/2
+    
+    
+    push();
+    
+    
+    translate(t.x, t.y)
+    rotate(this.angle)
+    
+    
+    fill(255, 0, 0, 100)
+    //stroke(0)
+    noStroke();
+    triangle(tw, 0, -tw, th*0.75, -tw, -th*0.75)
+    
+    
+    
+    pop();
+    
+    /*noStroke();
+    fill(0)
+    textAlign(CENTER, CENTER)
+    text(this.lives, t.x, t.y)*/
+    
+    
+  }
+  move() {
+    let t = this
+    
+    /*if (frameCount % t.dirUpdate === 0) {
+      this.otherAng += random(t.dir[0], t.dir[1])
+    }
+    this.angle = lerp(this.angle, this.otherAng, 0.1)
+    */
+    
+    
+    
+    
+    this.xv = cos(this.angle)*t.speed;
+    this.yv = sin(this.angle)*t.speed;
+    
+    
+    
+    this.x += t.xv
+    this.y += t.yv
+    
+    
+  }
+  attack() {
+    let t = this;
+    
+    if (t.reload >= t.maxR /*&& ships.length > 0*/) {
+      bullets.push(new Bullet({
+        team: "bugger",
+        x: t.x,
+        y: t.y,
+        angle: -t.angle,
+        speed: 10,
+        size: 2.5,
+        damage: 10,
+        pierce: 1,
+        clr: color(255, 0, 0, 100)
+      }));
+
+      this.reload = 0;
+    }
+    this.reload ++;
+  }
+  aim() {
+    if (ships.length > 0) {
+      let p = ships[this.target]
+      this.oAng = p.angle
+      
+      this.reAng = this.angle
+      
+      while (this.reAng > TAU) {
+        this.reAng -= TAU
+      }
+      while (this.reAng < 0) {
+        this.reAng += TAU
+      }
+      
+      while (this.oAng > this.reAng+PI) {
+        this.oAng -= TAU
+      }
+      while (this.oAng < this.reAng-PI) {
+        this.oAng += TAU
+      }
+      
+      
+      /*if (this.oAng < this.reAng) {
+        this.angle += PI/10
+      }
+      if (this.oAng < this.reAng) {
+        this.angle -= PI/10
+      }*/
+      if (this.angle < this.reAng-TAU || this.angle < this.reAng+TAU) {
+        this.angle = this.reAng
+      }
+      
+      let ooang = atan2(p.y-this.y, p.x-this.x)+this.baseDir*random(15, 60)
+      while (ooang > this.reAng+PI) {
+        ooang -= TAU
+      }
+      while (ooang < this.reAng-PI) {
+        ooang += TAU
+      }
+      
+      this.angle = lerp(this.angle, ooang, 0.5)
+      
+      
+    }
+    
+    
+  }
+  update() {
+    if (this.target > ships.length-1) {
+      this.target = floor(random(ships.length-1))
+    }
+    
+    this.aim();
+    
+    this.move();
+    
+    this.restrain();
+    
+    this.attack();
+    
+    this.display();
+    
+    if (this.lives <= 0) {
+      buggers.splice()
+    }
+    
+  }
+}
+
+class Ship extends Unit {
+  constructor(t) {
+    super()
+    this.x = t.x;
+    this.y = t.y;
+    this.w = t.w;
+    this.h = t.h;
+    this.reload = t.reload;
+    this.maxR = t.maxR;
+    this.speed = t.speed;
+    this.angle = t.angle;
+    this.otherAng = this.angle;
+    this.reAng = this.angle;
+    this.baseDir = t.baseDir;
+    this.lives = t.lives;
+    this.xv = cos(this.angle)*t.speed;
+    this.yv = sin(this.angle)*t.speed;
+    this.dir = t.dir;
+    this.dirUpdate = t.dirUpdate;
+    this.n = t.n;
+    this.target = t.target;
+    this.player = t.player || false;
+    this.break = false;
+  }
+  display() {
+    let t = this
+    let tw = t.w/2
+    let th = t.h/2
+    
+    
+    if (this.player) {
+      push();
+
+
+      translate(t.x, t.y)
+      rotate(this.angle)
+
+
+      fill(255, 200)
+      //stroke(0)
+      noStroke();
+      triangle(tw, 0, -tw, th*0.75, -tw, -th*0.75)
+
+
+
+      pop();
+    } else {
+      push();
+
+
+      translate(t.x, t.y)
+      rotate(this.angle)
+
+
+      fill(100, 100, 255, 100)
+      //stroke(0)
+      noStroke();
+      triangle(tw, 0, -tw, th*0.75, -tw, -th*0.75)
+
+
+
+      pop();
+    }
+  }
+  move() {
+    let t = this    
+    
+    
+    if (this.player) {
+      if (keys[SHIFT]) {
+        if (keys[LEFT_ARROW]) {
+          if (this.otherAng > this.angle) this.otherAng = this.angle - PI/50
+          this.otherAng -= PI/75
+        }
+        if (keys[RIGHT_ARROW]) {
+          if (this.otherAng < this.angle) this.otherAng = this.angle + PI/50
+          this.otherAng += PI/75
+        }
+      } else {
+        if (keys[LEFT_ARROW]) {
+          if (this.otherAng > this.angle) this.otherAng = this.angle - PI/50
+          this.otherAng -= PI/25
+        }
+        if (keys[RIGHT_ARROW]) {
+          if (this.otherAng < this.angle) this.otherAng = this.angle + PI/50
+          this.otherAng += PI/25
+        }
+      }
+      if (keys[UP_ARROW]) {
+        this.speed += 0.1
+      }
+      if (keys[DOWN_ARROW]) {
+        this.speed -= 0.2
+      }
+
+
+      if (keys[-2] && keys[66]) {
+        
+        this.break = !this.break;
+      }
+
+      this.angle = lerp(this.angle, this.otherAng, 0.5)
+
+
+
+      this.xv = cos(this.angle)*t.speed;
+      this.yv = sin(this.angle)*t.speed;
+
+
+      if (this.break) {
+        this.xv = 0;
+        this.yv = 0;
+      }
+
+      this.x += t.xv
+      this.y += t.yv
+
+    } else {
+      this.xv = cos(this.angle)*t.speed;
+      this.yv = sin(this.angle)*t.speed;
+
+
+      if (this.break) {
+        this.xv = 0;
+        this.yv = 0;
+      }
+
+
+      this.x += t.xv
+      this.y += t.yv
+    }
+    
+  }
+  attack() {
+    let t = this;
+    
+    
+    if (this.player) {
+      if (t.reload >= t.maxR && keys[32]) {
+        bullets.push(new Bullet({
+          team: "ship",
+          x: t.x,
+          y: t.y,
+          angle: -t.angle,
+          speed: 15,
+          size: 5,
+          damage: 25,
+          pierce: 1,
+          clr: color(255, 100)
+        }));
+
+        this.reload = 0;
+      }
+      this.reload ++;
+    } else {
+      if (t.reload >= t.maxR /*&& ships.length > 0*/) {
+        bullets.push(new Bullet({
+          team: "ship",
+          x: t.x,
+          y: t.y,
+          angle: -t.angle,
+          speed: 10,
+          size: 2.5,
+          damage: 10,
+          pierce: 1,
+          clr: color(100, 100, 255, 150)
+        }));
+
+        this.reload = 0;
+      }
+      this.reload ++;
+    }
+  }
+  aim() {
+    if (this.player) {
+      
+    } else {
+      if (buggers.length > 0) {
+        let b = buggers[this.target]
+        this.oAng = b.angle
+
+        this.reAng = this.angle
+
+        while (this.reAng > TAU) {
+          this.reAng -= TAU
+        }
+        while (this.reAng < 0) {
+          this.reAng += TAU
+        }
+
+        while (this.oAng > this.reAng+PI) {
+          this.oAng -= TAU
+        }
+        while (this.oAng < this.reAng-PI) {
+          this.oAng += TAU
+        }
+
+
+        /*if (this.oAng < this.reAng) {
+          this.angle += PI/10
+        }
+        if (this.oAng < this.reAng) {
+          this.angle -= PI/10
+        }*/
+        if (this.angle < this.reAng-TAU || this.angle < this.reAng+TAU) {
+          this.angle = this.reAng
+        }
+
+        let ooang = atan2(b.y-this.y, b.x-this.x)-this.baseDir*random(10, 60)
+        while (ooang > this.reAng+PI) {
+          ooang -= TAU
+        }
+        while (ooang < this.reAng-PI) {
+          ooang += TAU
+        }
+
+        this.angle = lerp(this.angle, ooang, 0.5)
+      }
+    }
+  }
+  update() {
+    if (this.target > buggers.length-1) {
+      this.target = floor(random(constrain(this.n, 0, buggers.length-1)))
+    }
+    
+    
+    this.aim();
+    
+    this.move();
+    
+    this.restrain();
+    
+    this.display();
+    
+    this.attack();
+    
+  }
+}
+
+
+/*
+class Player extends Unit {
+  constructor(t) {
+    super()
+    this.x = t.x;
+    this.y = t.y;
+    this.w = t.w;
+    this.h = t.h;
+    this.reload = t.reload;
+    this.maxR = t.maxR;
+    this.speed = t.speed;
+    this.angle = t.angle;
+    this.otherAng = this.angle;
+    this.lives = t.lives;
+    this.xv = cos(this.angle)*t.speed;
+    this.yv = sin(this.angle)*t.speed;
+    this.n = t.n;
+    this.break = t.break || false;
+  }
+  display() {
+    let t = this
+    let tw = t.w/2
+    let th = t.h/2
+    
+    
+    push();
+    
+    
+    translate(t.x, t.y)
+    rotate(this.angle)
+    
+    
+    fill(255, 200)
+    //stroke(0)
+    noStroke();
+    triangle(tw, 0, -tw, th*0.75, -tw, -th*0.75)
+    
+    
+    
+    pop();
+  }
+  attack() {
+    let t = this;
+    
+    if (t.reload >= t.maxR && keys[32]) {
+      bullets.push(new Bullet({
+        team: "ship",
+        x: t.x,
+        y: t.y,
+        angle: -t.otherAng,
+        speed: 15,
+        size: 5,
+        damage: 25,
+        pierce: 1,
+        clr: color(255, 100)
+      }));
+
+      this.reload = 0;
+    }
+    this.reload ++;
+  }
+  move() {
+    let t = this;
+    
+    
+    if (keys[SHIFT]) {
+      if (keys[LEFT_ARROW]) {
+        if (this.otherAng > this.angle) this.otherAng = this.angle - PI/50
+        this.otherAng -= PI/75
+      }
+      if (keys[RIGHT_ARROW]) {
+        if (this.otherAng < this.angle) this.otherAng = this.angle + PI/50
+        this.otherAng += PI/75
+      }
+    } else {
+      if (keys[LEFT_ARROW]) {
+        if (this.otherAng > this.angle) this.otherAng = this.angle - PI/50
+        this.otherAng -= PI/25
+      }
+      if (keys[RIGHT_ARROW]) {
+        if (this.otherAng < this.angle) this.otherAng = this.angle + PI/50
+        this.otherAng += PI/25
+      }
+    }
+    if (keys[UP_ARROW]) {
+      this.speed += 0.1
+    }
+    if (keys[DOWN_ARROW]) {
+      this.speed -= 0.2
+    }
+    
+    
+    if (keys[-2] && keys[66]) {
+      this.break = !this.break;
+    }
+    
+    this.angle = lerp(this.angle, this.otherAng, 0.5)
+    
+    
+    
+    this.xv = cos(this.angle)*t.speed;
+    this.yv = sin(this.angle)*t.speed;
+    
+    
+    if (this.break) {
+      this.xv = 0;
+      this.yv = 0;
+    }
+    
+    this.x += t.xv
+    this.y += t.yv
+    
+  }
+  restrain() {
+    if (this.x < 0) {
+      this.x = width-0
+    }
+    if (this.x > width-0) {
+      this.x = 0
+    }
+    if (this.y < 0) {
+      this.y = height-0
+    }
+    if (this.y > height-0) {
+      this.y = 0
+    }
+  }
+  update() {    
+    this.move();
+    
+    this.restrain();
+    
+    this.display();
+    
+    this.attack();
+        
+  }
+}
+
+
+
+class Rogue extends Unit {
+  constructor(t) {
+    super()
+    this.x = t.x;
+    this.y = t.y;
+    this.w = t.w;
+    this.h = t.h;
+    this.reload = t.reload;
+    this.maxR = t.maxR;
+    this.speed = t.speed;
+    this.angle = t.angle;
+    this.otherAng = this.angle;
+    this.lives = t.lives;
+    this.xv = cos(this.angle)*t.speed;
+    this.yv = sin(this.angle)*t.speed;
+    this.n = t.n;
+  }
+  display() {
+    let t = this
+    let tw = t.w/2
+    let th = t.h/2
+    
+    
+    push();
+    
+    
+    translate(t.x, t.y)
+    rotate(this.angle)
+    
+    
+    fill(100, 200)
+    strokeWeight(1)
+    stroke(50)
+    triangle(tw, 0, -tw, th*0.75, -tw, -th*0.75)
+    
+    
+    
+    pop();
+  }
+  attack() {
+    let t = this;
+    
+    if (t.reload >= t.maxR && keys[32]) {
+      bullets.push(new Bullet({
+        team: undefined,
+        x: t.x,
+        y: t.y,
+        angle: -t.otherAng,
+        speed: 15,
+        size: 5,
+        damage: 25,
+        pierce: 1,
+        clr: color(255, 100)
+      }));
+
+      this.reload = 0;
+    }
+    this.reload ++;
+  }
+  move() {
+    let t = this;
+    
+    if (keys[SHIFT]) {
+      if (keys[LEFT_ARROW]) {
+        if (this.otherAng > this.angle) this.otherAng = this.angle - PI/50
+        this.otherAng -= PI/100
+      }
+      if (keys[RIGHT_ARROW]) {
+        if (this.otherAng < this.angle) this.otherAng = this.angle + PI/50
+        this.otherAng += PI/100
+      }
+    } else {
+      if (keys[LEFT_ARROW]) {
+        if (this.otherAng > this.angle) this.otherAng = this.angle - PI/50
+        this.otherAng -= PI/25
+      }
+      if (keys[RIGHT_ARROW]) {
+        if (this.otherAng < this.angle) this.otherAng = this.angle + PI/50
+        this.otherAng += PI/25
+      }
+    }
+    if (keys[UP_ARROW]) {
+      this.speed += 0.1
+    }
+    if (keys[DOWN_ARROW]) {
+      this.speed -= 0.2
+    }
+    
+    
+    this.angle = lerp(this.angle, this.otherAng, 0.5)
+    
+    
+    
+    this.xv = cos(this.angle)*t.speed;
+    this.yv = sin(this.angle)*t.speed;
+    
+    this.x += t.xv
+    this.y += t.yv
+    
+  }
+  restrain() {
+    if (this.x < 0) {
+      this.x = width-0
+    }
+    if (this.x > width-0) {
+      this.x = 0
+    }
+    if (this.y < 0) {
+      this.y = height-0
+    }
+    if (this.y > height-0) {
+      this.y = 0
+    }
+  }
+  update() {    
+    this.move();
+    
+    this.restrain();
+    
+    this.display();
+    
+    this.attack();
+        
+  }
+}
+*/
+
+
+
+
+let shipN = 51;
+let bugN = 100;
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+  frameRate(50);
+  angleMode(RADIANS)
+  
+  ships.push(new Ship({
+    team: "ship",
+    x: random(width),
+    y: random(height),
+    w: 15,
+    h: 15,
+    speed: 5,
+    lives: 100,
+    angle: TAU-HALF_PI,
+    reload: 10,
+    maxR: 10,
+    n: ships.length,
+    player: true,
+    target: floor(random(bugN)),
+    
+    baseDir: PI/100,
+    dir: [-PI, 0],
+    dirUpdate: 50,
+  }))
+  for (let i = 0; i < 50; i++){
+    ships.push(new Ship({
+      team: "ship",
+      x: random(width),
+      y: random(height),
+      w: 15,
+      h: 15,
+      speed: random(2, 4),
+      lives: 100,
+      angle: random(TAU),
+      reload: random(100),
+      maxR: 100,
+      n: ships.length,
+      baseDir: PI/100,
+      dir: [-PI, 0],
+      dirUpdate: 50,
+      player: false,
+      target: floor(random(bugN))
+    }))
+  }
+  for (let i = 0; i < 100; i++){
+    buggers.push(new Bug({
+      team: "bugger",
+      x: random(width),
+      y: random(height),
+      w: 15,
+      h: 15,
+      speed: random(4, 6),
+      lives: 100,
+      angle: random(TAU),
+      reload: random(100),
+      maxR: 100,
+      n: buggers.length,
+      baseDir: PI/100,
+      dir: [-PI, 0],
+      dirUpdate: 50,
+      target: floor(random(shipN))
+    }))
+  }
+}
+let play = 0;
+function draw() {
+  background(0);
+  
+  
+  if (keys[-1] && keys[219]) {
+    ships[play].player = false;
+    ships[play].maxR = 100;
+    play--;
+    if (play < 0) {
+      play = ships.length-1
+    }
+    ships[play].player = true;
+    ships[play].maxR = 10;
+  }
+  if (keys[-1] && keys[221]) {
+    ships[play].player = false;
+    ships[play].maxR = 100;
+    play++;
+    if (play > ships.length-1) {
+      play = 0
+    }
+    ships[play].player = true;
+    ships[play].maxR = 10;
+  }
+  
+  for (let i = bullets.length-1; i >= 0; i--) {
+    let b = bullets[i]
+    if (bullets[i].pierce <= 0 ||
+       b.x < -50 ||
+       b.x > width+50 ||
+       b.y < -50 ||
+       b.y > height+50) {
+      bullets.splice(i, 1)
+      continue
+    }
+    bullets[i].n = i;
+    b.update();
+    
+  }
+  for (let i = buggers.length-1; i >= 0; i--) {
+    let b = buggers[i]
+    buggers[i].n = i;
+    b.update();
+    if (buggers[i].lives <= 0) {
+      buggers.splice(i, 1)
+    }
+  }
+  for (let i = ships.length-1; i >= 0; i--) {
+    let s = ships[i]
+    ships[i].n = i;
+    s.update();
+    if (ships[i].lives <= 0) {
+      ships.splice(i, 1)
+      if (play === i && ships.length > 0) {
+        play = ships.length-1;
+        ships[play].player = true;
+        ships[play].maxR = 10;
+        ships[play].speed = 5;
+      }
+    }
+  }
+  for (let i = explods.length-1; i >= 0; i--) {
+    let e = explods[i]
+    explods[i].n = i;
+    e.update();
+  }
+    
+  
+  if (ships.length < 1) {
+    console.log("Game Over")
+    fill(255, 0, 0, 150)
+    noStroke();
+    rect(0, 0, width, height)
+    noLoop();
+  }
+  
+  if (play > ships.length-1) {
+    play = ships.length-1;
+    ships[play].player = true;
+    ships[play].maxR = 10;
+    ships[play].speed = 5;
+  }
+    
+  
+  noStroke()
+  fill(200)
+  rect(10, 10, 100, 10)
+  fill(0, 150, 0)
+  let h = ships[play].lives
+  rect(10, 10, h*(100/100), 10)
+  
+  
+  
+  if (buggers.length > 0) {
+    stroke(255)
+    strokeWeight(1)
+    strokeCap(SQUARE)
+    line(buggers[0].x-10, buggers[0].y, buggers[0].x-3, buggers[0].y)
+    line(buggers[0].x+10, buggers[0].y, buggers[0].x+3, buggers[0].y)
+    line(buggers[0].x, buggers[0].y-10, buggers[0].x, buggers[0].y-3)
+    line(buggers[0].x, buggers[0].y+10, buggers[0].x, buggers[0].y+3)
+    
+    
+    fill(255)
+    //text(round(buggers[0].angle, 2) + " -- " + round(players[0].angle, 2), 10, 10)
+    text(keys[-1], 10, 10)
+  }
+  
+  keys[-1] = false;
+  keys[-2] = false;
+  
+}
+
+function mouseClicked() {
+  if (false && buggers.length > 0) {
+    let n = floor(random(buggers.length-1))
+    n = 0;
+    let ang = atan2(buggers[n].y-mouseY, buggers[n].x-mouseX)
+    for (let i = ang-(PI/100); i < ang+(PI/100); i += PI/100) {
+      bullets.push(new Bullet({
+        team: undefined,
+        x: mouseX,
+        y: mouseY,
+        angle: -i,
+        speed: 25,
+        size: 25,
+        damage: 10,
+        pierce: 1,
+        clr: color(255),
+      }))
+    }
+  }
+  
+  
+  
+  for (let c = 0; c < 1; c++) {
+    let p = ships[play]
+    ships.push(new Ship({
+      team: "ship",
+      x: p.x,
+      y: p.y,
+      w: 15,
+      h: 15,
+      speed: random(2, 4),
+      lives: 100,
+      angle: atan2(-p.y+mouseY, -p.x+mouseX),
+      reload: random(100),
+      maxR: 100,
+      n: ships.length,
+      baseDir: PI/100,
+      dir: [-PI, 0],
+      dirUpdate: 50,
+      player: false,
+      target: floor(random(bugN))
+    }))
+    shipN++;
+  }
+  
+  console.log(buggers.length+" -- "+ships.length+"\n"+bullets.length)
+  
+    
+}
