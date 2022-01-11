@@ -1,8 +1,3 @@
-function c123() {
-  ellipse(100, 100, 100, 100)
-}
-
-
 var keys = [];
 keys[-1] = false;
 keys[-1] = false;
@@ -33,7 +28,7 @@ class Effect {
 }
 class Explosion extends Effect {
   constructor(t) {
-    super()
+    super();
     this.x = t.x;
     this.y = t.y;
     this.size = t.size;
@@ -42,15 +37,15 @@ class Explosion extends Effect {
     this.n = t.n;
   }
   display() {
-    fill(255, random(255), 0)
+    fill(255, random(255), 0);
     noStroke();
-    ellipse(this.x, this.y, this.size, this.size)
+    ellipse(this.x, this.y, this.size, this.size);
   }
   expand() {
     this.size += this.grow;
-    this.size = constrain(this.size, 0, this.toSize)
+    this.size = constrain(this.size, 0, this.toSize);
     if (this.size >= this.toSize) {
-      explods.splice(this.n, 1)
+      explods.splice(this.n, 1);
     }
   }
   update() {
@@ -61,7 +56,7 @@ class Explosion extends Effect {
 }
 class DamageScreen extends Effect {
   constructor() {
-    super()
+    super();
   }
 }
 
@@ -75,7 +70,7 @@ class Projectile {
 }
 class Bullet extends Projectile {
   constructor(t) {
-    super()
+    super();
     this.x = t.x;
     this.y = t.y;
     this.clr = t.clr;
@@ -94,9 +89,9 @@ class Bullet extends Projectile {
     let t = this;
     
     noFill();
-    stroke(t.clr)
-    strokeWeight(2)
-    ellipse(t.x, t.y, t.size, t.size)
+    stroke(t.clr);
+    strokeWeight(2);
+    ellipse(t.x, t.y, t.size, t.size);
   }
   
   
@@ -130,7 +125,7 @@ class Bullet extends Projectile {
               toSize: 10,
               grow: 1,
               n: explods.length,
-            }))
+            }));
             this.pierce -= 1;
             ships[shp].lives -= t.damage;
           }
@@ -152,7 +147,7 @@ class Bullet extends Projectile {
               toSize: 10,
               grow: 1,
               n: explods.length,
-            }))
+            }));
             this.pierce -= 1;
             buggers[bgs].lives -= t.damage;
           }
@@ -173,7 +168,7 @@ class Bullet extends Projectile {
               toSize: 10,
               grow: 1,
               n: explods.length,
-            }))
+            }));
             this.pierce -= 1;
             ships[shp].lives -= t.damage;
           }
@@ -194,7 +189,7 @@ class Bullet extends Projectile {
               toSize: 10,
               grow: 1,
               n: explods.length,
-            }))
+            }));
             this.pierce -= 1;
             buggers[bgs].lives -= t.damage;
           }
@@ -255,7 +250,7 @@ class Unit {
 
 class Bug extends Unit {
   constructor(t) {
-    super()
+    super();
     this.x = t.x;
     this.y = t.y;
     this.w = t.w;
@@ -288,22 +283,22 @@ class Bug extends Unit {
     push();
     
     
-    translate(t.x, t.y)
-    rotate(this.angle)
+    translate(t.x, t.y);
+    rotate(this.angle);
     
     
-    fill(255, 0, 0, 100)
-    //stroke(0)
+    fill(255, 0, 0, 100);
+    //stroke(0);
     noStroke();
-    triangle(tw, 0, -tw, th*0.75, -tw, -th*0.75)
+    triangle(tw, 0, -tw, th*0.75, -tw, -th*0.75);
     
     
     
     pop();
     
     /*noStroke();
-    fill(0)
-    textAlign(CENTER, CENTER)
+    fill(0);
+    textAlign(CENTER, CENTER);
     text(this.lives, t.x, t.y)*/
     
     
@@ -312,9 +307,9 @@ class Bug extends Unit {
     let t = this
     
     /*if (frameCount % t.dirUpdate === 0) {
-      this.otherAng += random(t.dir[0], t.dir[1])
+      this.otherAng += random(t.dir[0], t.dir[1]);
     }
-    this.angle = lerp(this.angle, this.otherAng, 0.1)
+    this.angle = lerp(this.angle, this.otherAng, 0.1);
     */
     
     
@@ -343,7 +338,7 @@ class Bug extends Unit {
         size: 2.5,
         damage: 10,
         pierce: 1,
-        clr: color(255, 0, 0, 100)
+        clr: color(255, 0, 0, 100),
       }));
 
       this.reload = 0;
@@ -382,7 +377,7 @@ class Bug extends Unit {
         this.angle = this.reAng
       }
       
-      let ooang = atan2(p.y-this.y, p.x-this.x)+this.baseDir*random(15, 60)
+      let ooang = atan2(p.y-this.y, p.x-this.x)+this.baseDir*random(15, 60);
       while (ooang > this.reAng+PI) {
         ooang -= TAU
       }
@@ -390,7 +385,7 @@ class Bug extends Unit {
         ooang += TAU
       }
       
-      this.angle = lerp(this.angle, ooang, 0.5)
+      this.angle = lerp(this.angle, ooang, 0.5);
       
       
     }
@@ -399,7 +394,7 @@ class Bug extends Unit {
   }
   update() {
     if (this.target > ships.length-1) {
-      this.target = floor(random(ships.length-1))
+      this.target = floor(random(ships.length-1));
     }
     
     this.aim();
@@ -413,7 +408,7 @@ class Bug extends Unit {
     this.display();
     
     if (this.lives <= 0) {
-      buggers.splice()
+      buggers.splice();
     }
     
   }
@@ -421,7 +416,7 @@ class Bug extends Unit {
 
 class Ship extends Unit {
   constructor(t) {
-    super()
+    super();
     this.x = t.x;
     this.y = t.y;
     this.w = t.w;
@@ -453,14 +448,14 @@ class Ship extends Unit {
       push();
 
 
-      translate(t.x, t.y)
-      rotate(this.angle)
+      translate(t.x, t.y);
+      rotate(this.angle);
 
 
-      fill(255, 200)
-      //stroke(0)
+      fill(255, 200);
+      //stroke(0);
       noStroke();
-      triangle(tw, 0, -tw, th*0.75, -tw, -th*0.75)
+      triangle(tw, 0, -tw, th*0.75, -tw, -th*0.75);
 
 
 
@@ -469,14 +464,14 @@ class Ship extends Unit {
       push();
 
 
-      translate(t.x, t.y)
-      rotate(this.angle)
+      translate(t.x, t.y);
+      rotate(this.angle);
 
 
-      fill(100, 100, 255, 100)
-      //stroke(0)
+      fill(100, 100, 255, 100);
+      //stroke(0);
       noStroke();
-      triangle(tw, 0, -tw, th*0.75, -tw, -th*0.75)
+      triangle(tw, 0, -tw, th*0.75, -tw, -th*0.75);
 
 
 
@@ -490,20 +485,20 @@ class Ship extends Unit {
     if (this.player) {
       if (keys[SHIFT]) {
         if (keys[LEFT_ARROW]) {
-          if (this.otherAng > this.angle) this.otherAng = this.angle - PI/50
+          if (this.otherAng > this.angle); this.otherAng = this.angle - PI/50
           this.otherAng -= PI/75
         }
         if (keys[RIGHT_ARROW]) {
-          if (this.otherAng < this.angle) this.otherAng = this.angle + PI/50
+          if (this.otherAng < this.angle); this.otherAng = this.angle + PI/50
           this.otherAng += PI/75
         }
       } else {
         if (keys[LEFT_ARROW]) {
-          if (this.otherAng > this.angle) this.otherAng = this.angle - PI/50
+          if (this.otherAng > this.angle); this.otherAng = this.angle - PI/50
           this.otherAng -= PI/25
         }
         if (keys[RIGHT_ARROW]) {
-          if (this.otherAng < this.angle) this.otherAng = this.angle + PI/50
+          if (this.otherAng < this.angle); this.otherAng = this.angle + PI/50
           this.otherAng += PI/25
         }
       }
@@ -520,7 +515,7 @@ class Ship extends Unit {
         this.break = !this.break;
       }
 
-      this.angle = lerp(this.angle, this.otherAng, 0.5)
+      this.angle = lerp(this.angle, this.otherAng, 0.5);
 
 
 
@@ -567,7 +562,7 @@ class Ship extends Unit {
           size: 5,
           damage: 25,
           pierce: 1,
-          clr: color(255, 100)
+          clr: color(255, 100),
         }));
 
         this.reload = 0;
@@ -584,7 +579,7 @@ class Ship extends Unit {
           size: 2.5,
           damage: 10,
           pierce: 1,
-          clr: color(100, 100, 255, 150)
+          clr: color(100, 100, 255, 150),
         }));
 
         this.reload = 0;
@@ -627,7 +622,7 @@ class Ship extends Unit {
           this.angle = this.reAng
         }
 
-        let ooang = atan2(b.y-this.y, b.x-this.x)-this.baseDir*random(10, 60)
+        let ooang = atan2(b.y-this.y, b.x-this.x)-this.baseDir*random(10, 60);
         while (ooang > this.reAng+PI) {
           ooang -= TAU
         }
@@ -635,13 +630,13 @@ class Ship extends Unit {
           ooang += TAU
         }
 
-        this.angle = lerp(this.angle, ooang, 0.5)
+        this.angle = lerp(this.angle, ooang, 0.5);
       }
     }
   }
   update() {
     if (this.target > buggers.length-1) {
-      this.target = floor(random(constrain(this.n, 0, buggers.length-1)))
+      this.target = floor(random(constrain(this.n, 0, buggers.length-1)));
     }
     
     
@@ -662,7 +657,7 @@ class Ship extends Unit {
 /*
 class Player extends Unit {
   constructor(t) {
-    super()
+    super();
     this.x = t.x;
     this.y = t.y;
     this.w = t.w;
@@ -687,14 +682,14 @@ class Player extends Unit {
     push();
     
     
-    translate(t.x, t.y)
-    rotate(this.angle)
+    translate(t.x, t.y);
+    rotate(this.angle);
     
     
-    fill(255, 200)
-    //stroke(0)
+    fill(255, 200);
+    //stroke(0);
     noStroke();
-    triangle(tw, 0, -tw, th*0.75, -tw, -th*0.75)
+    triangle(tw, 0, -tw, th*0.75, -tw, -th*0.75);
     
     
     
@@ -713,7 +708,7 @@ class Player extends Unit {
         size: 5,
         damage: 25,
         pierce: 1,
-        clr: color(255, 100)
+        clr: color(255, 100);
       }));
 
       this.reload = 0;
@@ -726,20 +721,20 @@ class Player extends Unit {
     
     if (keys[SHIFT]) {
       if (keys[LEFT_ARROW]) {
-        if (this.otherAng > this.angle) this.otherAng = this.angle - PI/50
+        if (this.otherAng > this.angle); this.otherAng = this.angle - PI/50
         this.otherAng -= PI/75
       }
       if (keys[RIGHT_ARROW]) {
-        if (this.otherAng < this.angle) this.otherAng = this.angle + PI/50
+        if (this.otherAng < this.angle); this.otherAng = this.angle + PI/50
         this.otherAng += PI/75
       }
     } else {
       if (keys[LEFT_ARROW]) {
-        if (this.otherAng > this.angle) this.otherAng = this.angle - PI/50
+        if (this.otherAng > this.angle); this.otherAng = this.angle - PI/50
         this.otherAng -= PI/25
       }
       if (keys[RIGHT_ARROW]) {
-        if (this.otherAng < this.angle) this.otherAng = this.angle + PI/50
+        if (this.otherAng < this.angle); this.otherAng = this.angle + PI/50
         this.otherAng += PI/25
       }
     }
@@ -755,7 +750,7 @@ class Player extends Unit {
       this.break = !this.break;
     }
     
-    this.angle = lerp(this.angle, this.otherAng, 0.5)
+    this.angle = lerp(this.angle, this.otherAng, 0.5);
     
     
     
@@ -802,7 +797,7 @@ class Player extends Unit {
 
 class Rogue extends Unit {
   constructor(t) {
-    super()
+    super();
     this.x = t.x;
     this.y = t.y;
     this.w = t.w;
@@ -826,14 +821,14 @@ class Rogue extends Unit {
     push();
     
     
-    translate(t.x, t.y)
-    rotate(this.angle)
+    translate(t.x, t.y);
+    rotate(this.angle);
     
     
-    fill(100, 200)
-    strokeWeight(1)
-    stroke(50)
-    triangle(tw, 0, -tw, th*0.75, -tw, -th*0.75)
+    fill(100, 200);
+    strokeWeight(1);
+    stroke(50);
+    triangle(tw, 0, -tw, th*0.75, -tw, -th*0.75);
     
     
     
@@ -852,7 +847,7 @@ class Rogue extends Unit {
         size: 5,
         damage: 25,
         pierce: 1,
-        clr: color(255, 100)
+        clr: color(255, 100);
       }));
 
       this.reload = 0;
@@ -864,20 +859,20 @@ class Rogue extends Unit {
     
     if (keys[SHIFT]) {
       if (keys[LEFT_ARROW]) {
-        if (this.otherAng > this.angle) this.otherAng = this.angle - PI/50
+        if (this.otherAng > this.angle); this.otherAng = this.angle - PI/50
         this.otherAng -= PI/100
       }
       if (keys[RIGHT_ARROW]) {
-        if (this.otherAng < this.angle) this.otherAng = this.angle + PI/50
+        if (this.otherAng < this.angle); this.otherAng = this.angle + PI/50
         this.otherAng += PI/100
       }
     } else {
       if (keys[LEFT_ARROW]) {
-        if (this.otherAng > this.angle) this.otherAng = this.angle - PI/50
+        if (this.otherAng > this.angle); this.otherAng = this.angle - PI/50
         this.otherAng -= PI/25
       }
       if (keys[RIGHT_ARROW]) {
-        if (this.otherAng < this.angle) this.otherAng = this.angle + PI/50
+        if (this.otherAng < this.angle); this.otherAng = this.angle + PI/50
         this.otherAng += PI/25
       }
     }
@@ -889,7 +884,7 @@ class Rogue extends Unit {
     }
     
     
-    this.angle = lerp(this.angle, this.otherAng, 0.5)
+    this.angle = lerp(this.angle, this.otherAng, 0.5);
     
     
     
@@ -935,7 +930,7 @@ let bugN = 100;
 function setup() {
   createCanvas(windowWidth, windowHeight);
   frameRate(50);
-  angleMode(RADIANS)
+  angleMode(RADIANS);
   
   ships.push(new Ship({
     team: "ship",
@@ -955,8 +950,8 @@ function setup() {
     baseDir: PI/100,
     dir: [-PI, 0],
     dirUpdate: 50,
-  }))
-  for (let i = 0; i < 50; i++){
+  }));
+  for (let i = 0; i < 25; i++) {
     ships.push(new Ship({
       team: "ship",
       x: random(width),
@@ -973,10 +968,10 @@ function setup() {
       dir: [-PI, 0],
       dirUpdate: 50,
       player: false,
-      target: floor(random(bugN))
-    }))
+      target: floor(random(bugN)),
+    }));
   }
-  for (let i = 0; i < 100; i++){
+  for (let i = 0; i < 50; i++) {
     buggers.push(new Bug({
       team: "bugger",
       x: random(width),
@@ -992,8 +987,8 @@ function setup() {
       baseDir: PI/100,
       dir: [-PI, 0],
       dirUpdate: 50,
-      target: floor(random(shipN))
-    }))
+      target: floor(random(shipN)),
+    }));
   }
 }
 let play = 0;
@@ -1029,7 +1024,7 @@ function draw() {
        b.x > width+50 ||
        b.y < -50 ||
        b.y > height+50) {
-      bullets.splice(i, 1)
+      bullets.splice(i, 1);
       continue
     }
     bullets[i].n = i;
@@ -1041,7 +1036,7 @@ function draw() {
     buggers[i].n = i;
     b.update();
     if (buggers[i].lives <= 0) {
-      buggers.splice(i, 1)
+      buggers.splice(i, 1);
     }
   }
   for (let i = ships.length-1; i >= 0; i--) {
@@ -1049,7 +1044,7 @@ function draw() {
     ships[i].n = i;
     s.update();
     if (ships[i].lives <= 0) {
-      ships.splice(i, 1)
+      ships.splice(i, 1);
       if (play === i && ships.length > 0) {
         play = ships.length-1;
         ships[play].player = true;
@@ -1066,10 +1061,10 @@ function draw() {
     
   
   if (ships.length < 1) {
-    console.log("Game Over")
-    fill(255, 0, 0, 150)
+    console.log("Game Over");
+    fill(255, 0, 0, 150);
     noStroke();
-    rect(0, 0, width, height)
+    rect(0, 0, width, height);
     noLoop();
   }
   
@@ -1081,28 +1076,28 @@ function draw() {
   }
     
   
-  noStroke()
-  fill(200)
-  rect(10, 10, 100, 10)
-  fill(0, 150, 0)
+  noStroke();
+  fill(200);
+  rect(10, 10, 100, 10);
+  fill(0, 150, 0);
   let h = ships[play].lives
-  rect(10, 10, h*(100/100), 10)
+  rect(10, 10, h*(100/100), 10);
   
   
   
   if (buggers.length > 0) {
-    stroke(255)
-    strokeWeight(1)
-    strokeCap(SQUARE)
-    line(buggers[0].x-10, buggers[0].y, buggers[0].x-3, buggers[0].y)
-    line(buggers[0].x+10, buggers[0].y, buggers[0].x+3, buggers[0].y)
-    line(buggers[0].x, buggers[0].y-10, buggers[0].x, buggers[0].y-3)
-    line(buggers[0].x, buggers[0].y+10, buggers[0].x, buggers[0].y+3)
+    stroke(255);
+    strokeWeight(1);
+    strokeCap(SQUARE);
+    line(buggers[0].x-10, buggers[0].y, buggers[0].x-3, buggers[0].y);
+    line(buggers[0].x+10, buggers[0].y, buggers[0].x+3, buggers[0].y);
+    line(buggers[0].x, buggers[0].y-10, buggers[0].x, buggers[0].y-3);
+    line(buggers[0].x, buggers[0].y+10, buggers[0].x, buggers[0].y+3);
     
     
-    fill(255)
-    //text(round(buggers[0].angle, 2) + " -- " + round(players[0].angle, 2), 10, 10)
-    text(keys[-1], 10, 10)
+    fill(255);
+    //text(round(buggers[0].angle, 2); + " -- " + round(players[0].angle, 2), 10, 10);
+    text(keys[-1], 10, 10);
   }
   
   keys[-1] = false;
@@ -1112,9 +1107,9 @@ function draw() {
 
 function mouseClicked() {
   if (false && buggers.length > 0) {
-    let n = floor(random(buggers.length-1))
+    let n = floor(random(buggers.length-1));
     n = 0;
-    let ang = atan2(buggers[n].y-mouseY, buggers[n].x-mouseX)
+    let ang = atan2(buggers[n].y-mouseY, buggers[n].x-mouseX);
     for (let i = ang-(PI/100); i < ang+(PI/100); i += PI/100) {
       bullets.push(new Bullet({
         team: undefined,
@@ -1126,7 +1121,7 @@ function mouseClicked() {
         damage: 10,
         pierce: 1,
         clr: color(255),
-      }))
+      }));
     }
   }
   
@@ -1150,12 +1145,12 @@ function mouseClicked() {
       dir: [-PI, 0],
       dirUpdate: 50,
       player: false,
-      target: floor(random(bugN))
-    }))
+      target: floor(random(bugN)),
+    }));
     shipN++;
   }
   
-  console.log(buggers.length+" -- "+ships.length+"\n"+bullets.length)
+  console.log(buggers.length+" -- "+ships.length+"\n"+bullets.length);
   
     
 }
